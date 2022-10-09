@@ -37,7 +37,7 @@
                     "fontSize": 20,
                     "dx": -400,
                     "dy": 300
-            }
+                }
             },
             {
                 "transform": [
@@ -128,13 +128,9 @@
             {
                   "transform": [
                     {
-                        "window": [{"op": "count", "as": "mineRanking"}],
+                        "window": [{"op": "rank", "as": "mineRanking"}],
                         "sort": [{"field": "mineRanking", "order": "descending"}],
                         "groupby": ["state", "dev_stat"]
-                    },
-                    {
-                      "window": [{"op": "rank", "as": "ranking"}],
-                      "sort": [{"field": "mineRanking", "order": "descending"}]
                     },
                     {"filter": "datum.mineRanking == 171"},
                     {
