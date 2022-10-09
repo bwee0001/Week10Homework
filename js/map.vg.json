@@ -1,0 +1,79 @@
+{
+"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+"width": 900,
+"height": 700,
+"title": {
+    "text":"Mineral Ore Mines In Australia as of 2022",
+    "fontSize": 24
+},
+"projection": {"type": "conicEqualArea","rotate":[-10,30,40]},
+"layer": [
+    {
+    "data": {
+        "url": "https://raw.githubusercontent.com/bwee0001/FIT3179Week9Homework/main/js/australiamap_ne_50m.topojson",
+        "format": {"type": "topojson", "feature": "ne_50m_admin_0_countries"}
+    },
+    "mark": {"type": "geoshape", "fill": "lightgrey", "stroke": "white"}
+    },
+    {
+        "data": {
+            "url": "https://raw.githubusercontent.com/bwee0001/FIT3179Week9Homework/main/js/mapWithStatelines.topojson",
+            "format": {"type": "topojson", "feature": "ne_50m_admin_1_states_provinces"}
+        },
+        "mark": {"type": "geoshape", "fill": null, "stroke": "white"}
+    },
+     {
+        "data": {"values": [{}]},
+        "mark": {
+            "type": "text",
+            "align": "left",
+            "baseline": "bottom",
+            "text": ["1 Dot = 1 Mine"],
+            "fontSize": 20,
+            "dx": -400,
+            "dy": 300
+      }
+    },
+    {
+    "data": {
+        "url": "https://raw.githubusercontent.com/bwee0001/FIT3179Week9Homework/main/data/Mineral%20Ores%20Australia.csv"
+    },
+    "transform": [
+        {"filter": "datum.country == 'Australia'"},
+        {"calculate": "'' + datum.commod1 + ' ' + datum.commod2 + ' ' + datum.commod3", "as": "allMinerals"},
+        {"calculate": "datum.commod2 + ' ' + datum.commod3", "as": "additionalMinerals"}
+    ],
+    "params":[
+        {
+            "name": "development_highlight",
+            "select": {"type": "point", "fields": ["dev_stat"]},
+            "bind": "legend"
+        }
+    ],
+    "mark": {"type": "circle", "tooltip": {"content": "data"}},
+    "encoding": {
+        "longitude": {"field": "longitude", "type": "quantitative"},
+        "latitude": {"field": "latitude", "type": "quantitative"},
+        "color": {
+            "field": "dev_stat",
+            "type": "nominal",
+            "title": "Development Status",
+            "scale": {"scheme": "category10"},
+            "legend": {"labelFontSize": 14, "titleFontSize": 16}
+        },
+        "opacity": {
+            "condition": {"param": "development_highlight", "value": 1},
+            "value": 0
+        },
+        "tooltip": [
+            {"field": "site_name", "type": "nominal", "title":"Mine Name"},
+            {"field": "latitude", "type": "nominal", "title":"Latitude"},
+            {"field": "longitude", "type": "nominal", "title":"Longitude"},
+            {"field": "commod1", "type": "nominal", "title":"Main Minerals Present"},
+            {"field": "additionalMinerals", "type": "nominal", "title":"Additional Minerals Present"},
+            {"field": "dev_stat", "type": "nominal", "title":"Development Status"}
+        ] 
+    }
+    }
+]
+}
