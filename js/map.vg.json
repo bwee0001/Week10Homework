@@ -42,7 +42,6 @@
             {
                 "transform": [
                 {"filter": "datum.country == 'Australia'"},
-                
                 {"calculate": "'' + datum.commod1 + ' ' + datum.commod2 + ' ' + datum.commod3", "as": "allMinerals"},
                 {"calculate": "datum.commod2 + ' ' + datum.commod3", "as": "additionalMinerals"}
             ],
@@ -92,7 +91,7 @@
                 "params":[
                     {
                         "name": "development_highlight",
-                        "select": {"type": "point"}
+                        "select": {"type": "point", "fields": ["dev_stat"]}
                     }
                 ],
                 "mark": {"type":"bar", "tooltip": {"content": "data"}},
