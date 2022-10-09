@@ -127,14 +127,18 @@
             },
             {
                   "transform": [
+                    {"filter": "datum.dev_stat == 'Prospect'"},
                     {
-                        "window": [{"op": "rank", "as": "mineRanking"}],
-                        "sort": [{"field": "mineRanking", "order": "descending"}],
+                        "aggregate": [{"op": "count", "as": "mineCount"}],
                         "groupby": ["state", "dev_stat"]
                     },
-                    {"filter": "datum.mineRanking == 171"},
                     {
-                      "calculate": "'Tasmania has the highest number; of prospect mines at: ' + datum['mineRanking'] + ' mines'",
+                        "window": [{"op": "rank", "as": "ranking"}],
+                        "sort": [{"field": "mineCount", "order": "descending"}]
+                    },
+                    {"filter": "datum.ranking == 1"},
+                    {
+                      "calculate": "datum['state'] + 'has the highest number; of prospect mines at: ' + datum['mineCount'] + ' mines'",
                       "as": "text_annotation_raw"
                     },
                     {
