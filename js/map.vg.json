@@ -1,28 +1,28 @@
 {
 "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
 "data": {
-    "url": "https://raw.githubusercontent.com/bwee0001/FIT3179Week9Homework/main/data/Mineral%20Ores%20Australia.csv"
-},
-"title": {
-    "text":"Mineral Ore Mines In Australia as of 2022",
-    "fontSize": 24
+    "url": "https://raw.githubusercontent.com/bwee0001/Week10Homework/main/data/Mineral%20Ores%20Australia.csv"
 },
 "vconcat": [
     {
+        "title": {
+            "text":"All Mineral Ores Mine Locations in Australia",
+            "fontSize": 20
+        },
         "width": 900,
         "height": 700,
         "projection": {"type": "conicEqualArea","rotate":[-10,30,40]},
         "layer": [
             {
             "data": {
-                "url": "https://raw.githubusercontent.com/bwee0001/FIT3179Week9Homework/main/js/australiamap_ne_50m.topojson",
+                "url": "https://raw.githubusercontent.com/bwee0001/Week10Homework/main/js/australiamap_ne_50m.topojson",
                 "format": {"type": "topojson", "feature": "ne_50m_admin_0_countries"}
             },
             "mark": {"type": "geoshape", "fill": "lightgrey", "stroke": "white"}
             },
             {
                 "data": {
-                    "url": "https://raw.githubusercontent.com/bwee0001/FIT3179Week9Homework/main/js/mapWithStatelines.topojson",
+                    "url": "https://raw.githubusercontent.com/bwee0001/Week10Homework/main/js/mapWithStatelines.topojson",
                     "format": {"type": "topojson", "feature": "ne_50m_admin_1_states_provinces"}
                 },
                 "mark": {"type": "geoshape", "fill": null, "stroke": "white"}
@@ -42,6 +42,7 @@
             {
                 "transform": [
                 {"filter": "datum.country == 'Australia'"},
+                
                 {"calculate": "'' + datum.commod1 + ' ' + datum.commod2 + ' ' + datum.commod3", "as": "allMinerals"},
                 {"calculate": "datum.commod2 + ' ' + datum.commod3", "as": "additionalMinerals"}
             ],
@@ -64,8 +65,8 @@
                     "legend": {"labelFontSize": 14, "titleFontSize": 16}
                 },
                 "opacity": {
-                    "condition": {"param": "development_highlight", "value": 1},
-                    "value": 0
+                    "condition": [{"param": "development_highlight", "value": 1}],
+                    "value": 0.1
                 },
                 "tooltip": [
                     {"field": "site_name", "type": "nominal", "title":"Mine Name"},
@@ -77,29 +78,98 @@
                 ] 
             }
             }
-    ]
+        ]
     },
     {
+        "title": {
+            "text":"Number & Status of Mineral Ore Mines in Each State",
+            "fontSize": 20
+        },
         "width": 900,
         "height": 700,
-        "mark": "bar",
-        "encoding": {
-            "x":{
-                "field": "state",
-                "type": "nominal",
-                "title": "State"
+        "layer": [
+            {
+                "params":[
+                    {
+                        "name": "development_highlight",
+                        "select": {"type": "point"}
+                    }
+                ],
+                "mark": {"type":"bar", "tooltip": {"content": "data"}},
+                "encoding": {
+                    "y":{
+                        "field": "state",
+                        "type": "nominal",
+                        "title": "State",
+                        "sort": "-x"
+                    },
+                    "x":{
+                        "aggregate": "count",
+                        "title": "Number of Mines",
+                        "type": "quantitative"
+                    },
+                    "color":{
+                        "field": "dev_stat",
+                        "type": "nominal",
+                        "scale": {"scheme": "category10"},
+                        "title": "Development Status",
+                        "legend": null
+                    },
+                    "opacity": {
+                        "condition": {"param": "development_highlight", "value": 1},
+                        "value": 0.2
+                    },
+                    "tooltip": [
+                        {"field": "state", "type": "nominal", "title":"State"},
+                        {"field": "dev_stat", "type": "nominal", "title":"Development Status"},
+                        {"field": "__count", "type": "quantitative", "title":"Number of Mines"}
+                    ]
+                } 
             },
-            "y":{
-                "aggregate": "count",
-                "type": "quantitative"
-            },
-            "color":{
-                "field": "dev_stat",
-                "type": "nominal",
-                "scale": {"scheme": "category10"},
-                "title": "Development Status"
+            {
+                  "transform": [
+                    {
+                        "window": [{"op": "count", "as": "mineRanking"}],
+                        "sort": [{"field": "mineRanking", "order": "descending"}],
+                        "groupby": ["state", "dev_stat"]
+                    },
+                    {
+                      "window": [{"op": "rank", "as": "ranking"}],
+                      "sort": [{"field": "mineRanking", "order": "descending"}]
+                    },
+                    {"filter": "datum.mineRanking == 171"},
+                    {
+                      "calculate": "'Tasmania has the highest number; of prospect mines at: ' + datum['mineRanking'] + ' mines'",
+                      "as": "text_annotation_raw"
+                    },
+                    {
+                      "calculate": "split(datum.text_annotation_raw, ';')",
+                      "as": "text_annotation"
+                    }
+                  ],
+                  "layer": [
+                    {
+                      "mark": {
+                        "type": "text",
+                        "fontSize":15,
+                        "dx": -200,
+                        "dy": -210,
+                        "baseline": "middle"
+                      },
+                      "encoding": {
+                        "color": {"value": "white"},
+                        "text": {"field": "text_annotation"}
+                    }
+                    }
+                  ]
             }
+        ]
+    }
+    ],
+    "config": {
+        "axis": {
+          "labelFontSize":14,
+          "titleFontSize":16
         }
     }
-    ]
 }
