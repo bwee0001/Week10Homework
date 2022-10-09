@@ -52,7 +52,7 @@
                     "bind": "legend"
                 }
             ],
-            "mark": {"type": "circle", "tooltip": {"content": "data"}},
+            "mark": {"type": "circle", "tooltip": {"content": "data"}, "strokeWidth":0.2, "stroke":"black"},
             "encoding": {
                 "longitude": {"field": "longitude", "type": "quantitative"},
                 "latitude": {"field": "latitude", "type": "quantitative"},
@@ -60,7 +60,7 @@
                     "field": "dev_stat",
                     "type": "nominal",
                     "title": "Development Status",
-                    "scale": {"scheme": "category10"},
+                    "scale": {"scheme": "paired"},
                     "legend": {"labelFontSize": 14, "titleFontSize": 16}
                 },
                 "opacity": {
@@ -110,7 +110,7 @@
                     "color":{
                         "field": "dev_stat",
                         "type": "nominal",
-                        "scale": {"scheme": "category10"},
+                        "scale": {"scheme": "paired"},
                         "title": "Development Status",
                         "legend": null
                     },
